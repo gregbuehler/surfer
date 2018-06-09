@@ -3,10 +3,17 @@
 # load .env file
 export $(grep -v '^#' .env | xargs)
 
+owner=root
+group=surfer
+mode=0775
+
 # configs
-mkdir -p $CONFIG/{traefik,plex,nzbget,sonarr,radarr}
-touch traefik/acme.json
-chmod 600 traefik/acme.json
+install -o $owner -g $group -m $mode -d $CONFIG/{traefik,plex,nzbget,sonarr,radarr}
+install -o $owner -g $group -m $mode -d $DOWNLOAD
+install -o $owner -g $group -m $mode -d $DATA
+
+touch $CONFIG/traefik/acme.json
+chmod 600 $CONFIG/traefik/acme.json
 
 
 # workflow
