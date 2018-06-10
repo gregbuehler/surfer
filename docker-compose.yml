@@ -109,3 +109,26 @@ services:
       traefik.port: "7878"
       traefik.frontend.rule: "Host:radarr.${DOMAIN}"
     restart: unless-stopped
+
+  rutorrent:
+    image: linuxserver/rutorrent:latest
+    container_name: rutorrent
+    hostname: rutorrent
+    ports:
+      - "8888:80"
+      - "5000:5000"
+      - "6881:6881/udp"
+      - "51413:51413"
+
+    volumes:
+      - ${CONFIG}/rutorrent:/config
+      - ${DOWNLOAD}/complete:/downloads
+    environment:
+      - PGID
+      - PUID
+      - TZ
+    labels:
+      traefik.enable: "true"
+      traefik.port: "80"
+      traefik.frontend.rule: "Host:rutorrent.${DOMAIN}"
+    restart: unless-stopped
