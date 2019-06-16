@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  ouroboros:
+    image: pyouroboros/ouroboros
+    container_name: ouroboros
+    hostname: ouroboros
+    environment:
+      - CLEANUP=true
+      - INTERVAL=300
+      - LOG_LEVEL=info
+      - SELF_UPDATE=true
+      - IGNORE=mongo influxdb postgres mariadb
+      - TZ
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
   traefik:
     image: traefik:latest
     command: --web --docker --docker.watch --docker.domain=${DOMAIN} --docker.exposedbydefault=false --acme.domains=${DOMAIN}
@@ -21,16 +36,31 @@ services:
     restart: unless-stopped
 
   plex:
-    image: linuxserver/plex
+    #image: linuxserver/plex
+    image: plexinc/pms-docker
     container_name: plex
     hostname: plex
     ports:
+      # plex ui
       - "32400:32400"
       - "32400:32400/udp"
+      
+      # plex dlna
       - "32469:32469"
       - "32469:32469/udp"
-      - "5353:5353/udp"
       - "1900:1900/udp"
+       
+      # bonjour discovery
+      - "5353:5353/udp"
+
+      # roku control
+      - "8324:8324"
+      
+      # GDM discovery
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
     volumes:
       - ${CONFIG}/plex:/config
       - ${DATA}/tv:/media/tv
@@ -41,7 +71,8 @@ services:
       - PGID
       - PUID
       - TZ
-      - VERSION=latest
+      - VERSION=docker
+      - PLEX_CLAIM=${CLAIM_TOKEN}
     labels:
       traefik.enable: "true"
       traefik.port: "32400"
@@ -119,7 +150,6 @@ services:
       - "5000:5000"
       - "6881:6881/udp"
       - "51413:51413"
-
     volumes:
       - ${CONFIG}/rutorrent:/config
       - ${DOWNLOAD}/complete:/downloads
@@ -131,4 +161,14 @@ services:
       traefik.enable: "true"
       traefik.port: "80"
       traefik.frontend.rule: "Host:rutorrent.${DOMAIN}"
+    restart: unless-stopped
+
+  waypost:
+    image: gregbuehler/waypost:latest
+    container_name: waypost
+    hostname: waypost
+    ports:
+      - "53:53"
+      - "53:53/udp"
+      - "5554:5554"
     restart: unless-stopped
