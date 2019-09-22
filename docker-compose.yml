@@ -12,12 +12,13 @@ services:
       - SELF_UPDATE=true
       - IGNORE=mongo influxdb postgres mariadb
       - TZ
+      - NOTIFIERS
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   
   traefik:
-    image: traefik:latest
+    image: traefik:v1.7
     command: --web --docker --docker.watch --docker.domain=${DOMAIN} --docker.exposedbydefault=false --acme.domains=${DOMAIN}
     container_name: traefik
     hostname: traefik
