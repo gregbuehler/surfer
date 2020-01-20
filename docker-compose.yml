@@ -68,6 +68,7 @@ services:
       - ${DATA}/movies:/media/movies
       - ${DATA}/music:/media/music
       - ${DATA}/anime:/media/anime
+      - /tmp:/transcode
     environment:
       - PGID
       - PUID
