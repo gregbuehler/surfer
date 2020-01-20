@@ -19,7 +19,7 @@ chmod 600 $CONFIG/traefik/acme.json
 
 
 # workflow
-mkdir -p $DOWNLOAD/{complete,incomplete,watch}
+mkdir -p $DOWNLOAD/{complete,incomplete,watch,transcode}
 
 
 # media
